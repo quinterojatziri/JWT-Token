@@ -33,9 +33,3 @@ Node.js, Express, SQLite (el que trae Node incluido), bcryptjs, jsonwebtoken, he
 
 ## Cómo funciona
 El usuario inicia sesión, el servidor compara la contraseña con el hash guardado y si coincide genera un token firmado con la SECRET_KEY. Ese token se manda en el header Authorization en cada petición, y los middlewares revisan que sea válido y que el rol sea el correcto antes de dejar pasar. Cada intento queda guardado en la tabla logs.
-
-## Limitaciones
-No usa HTTPS y los tokens no se pueden revocar antes de que expiren.
-
-## Integrantes
-(poner los nombres del equipo)
