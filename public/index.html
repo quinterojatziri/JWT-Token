@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Control de Acceso en Red</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* colores del tema, todo en tonos rosas */
+:root{
+  --rosa-fuerte:#e0218a;
+  --rosa:#ff4fa3;
+  --rosa-medio:#ff8cc6;
+  --rosa-claro:#ffc9e3;
+  --rosa-suave:#fff0f7;
+  --texto:#4a1535;
+  --texto-suave:#9a5a7d;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:'Poppins','Segoe UI',Arial,sans-serif;
+  color:var(--texto);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255,255,255,.55) 0, transparent 40%),
+    radial-gradient(circle at 90% 85%, rgba(255,255,255,.35) 0, transparent 45%),
+    linear-gradient(160deg,#ffd9ec 0%,#ffa6d2 50%,#ff7bbd 100%);
+  background-attachment:fixed;
+}
+
+header{
+  background:linear-gradient(90deg,#e0218a,#ff4fa3);
+  color:#fff;
+  padding:16px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 4px 18px rgba(224,33,138,.35);
+}
+header h1{margin:0;font-size:19px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+header .quien{font-size:13px;margin-right:10px;opacity:.95}
+
+.wrap{max-width:960px;margin:30px auto;padding:0 16px}
+
+.card{
+  background:#fff;
+  border:1px solid var(--rosa-claro);
+  border-radius:24px;
+  padding:26px;
+  margin-bottom:22px;
+  box-shadow:0 10px 30px rgba(224,33,138,.18);
+}
+h2{margin:0 0 14px;font-size:21px;color:var(--rosa-fuerte);font-weight:700}
+p{color:var(--texto-suave)}
+
+/* pantalla de login */
+.login-box{max-width:430px;margin:50px auto}
+.login-box .titulo{text-align:center;margin-bottom:20px}
+.login-box .titulo h1{margin:0;font-size:27px;color:var(--rosa-fuerte);font-weight:700}
+.login-box .titulo span{font-size:13px;color:var(--texto-suave)}
+
+input,select,textarea{
+  width:100%;
+  padding:12px 14px;
+  margin:6px 0;
+  font-family:inherit;
+  font-size:14px;
+  color:var(--texto);
+  background:var(--rosa-suave);
+  border:2px solid var(--rosa-claro);
+  border-radius:14px;
+  outline:none;
+  transition:.2s;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--rosa);
+  background:#fff;
+  box-shadow:0 0 0 4px rgba(255,79,163,.18);
+}
+input::placeholder,textarea::placeholder{color:#c78aab}
+
+button{
+  font-family:inherit;
+  font-size:14px;
+  font-weight:600;
+  color:#fff;
+  background:linear-gradient(135deg,var(--rosa),var(--rosa-fuerte));
+  border:none;
+  border-radius:30px;
+  padding:11px 22px;
+  margin:6px 6px 6px 0;
+  cursor:pointer;
+  box-shadow:0 5px 14px rgba(224,33,138,.3);
+  transition:.2s;
+}
+button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(224,33,138,.4)}
+button.sec{
+  background:#fff;
+  color:var(--rosa-fuerte);
+  border:2px solid var(--rosa-medio);
+  box-shadow:none;
+}
+button.sec:hover{background:var(--rosa-suave)}
+button.mini{padding:6px 13px;font-size:12px;margin:2px}
+header button{margin:0;background:#fff;color:var(--rosa-fuerte);box-shadow:none}
+
+.tabs{display:flex;gap:8px;margin-bottom:18px;background:var(--rosa-suave);padding:5px;border-radius:30px}
+.tabs button{flex:1;margin:0;box-shadow:none}
+
+nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+nav button{margin:0;background:rgba(255,255,255,.75);color:var(--rosa-fuerte);box-shadow:none}
+nav button.act{background:linear-gradient(135deg,var(--rosa),var(--rosa-fuerte));color:#fff;box-shadow:0 5px 14px rgba(224,33,138,.35)}
+
+.hidden{display:none!important}
+
+.msg{padding:11px 14px;border-radius:14px;margin-top:10px;font-size:13px}
+.msg.ok{background:#e4f8ec;color:#1b6b38}
+.msg.err{background:#ffe3ec;color:#b0104f}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px;margin-top:18px}
+.stat{
+  background:linear-gradient(160deg,var(--rosa-suave),#ffe0f0);
+  border:1px solid var(--rosa-claro);
+  border-radius:18px;
+  padding:16px 10px;
+  text-align:center;
+  font-size:13px;
+  color:var(--texto-suave);
+}
+.stat b{display:block;font-size:28px;color:var(--rosa-fuerte);font-weight:700}
+
+.tabla{overflow:auto;border-radius:16px;border:1px solid var(--rosa-claro)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:linear-gradient(90deg,var(--rosa-fuerte),var(--rosa));color:#fff;text-align:left;padding:11px 14px;font-weight:600}
+td{padding:11px 14px;border-bottom:1px solid #ffe3f0}
+tbody tr:hover{background:var(--rosa-suave)}
+
+.tag{display:inline-block;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+.verde{background:#dcf5e6;color:#1b6b38}
+.rojo{background:#ffdce8;color:#b0104f}
+.dorado{background:#fff0cf;color:#8a5a00}
+.gris{background:#f1e6ec;color:#7a5568}
+
+.fila{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.fila>*{flex:1;min-width:150px;margin:0}
+
+pre{
+  background:var(--rosa-suave);
+  border:1px solid var(--rosa-claro);
+  padding:16px;
+  border-radius:14px;
+  overflow:auto;
+  white-space:pre-wrap;
+  word-break:break-all;
+  font-size:13px;
+  color:var(--texto);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Control de Acceso en Red</h1>
+  <div id="sesionInfo" class="hidden">
+    <span class="quien" id="quien"></span>
+    <button class="mini" onclick="logout()">Cerrar sesión</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- login y registro -->
+  <div id="vistaAuth" class="card login-box">
+    <div class="titulo">
+      <h1>Bienvenida</h1>
+      <span>Accede con tu cuenta para continuar</span>
+    </div>
+
+    <div class="tabs">
+      <button id="tabLogin" onclick="tabAuth('login')">Iniciar sesión</button>
+      <button id="tabReg" class="sec" onclick="tabAuth('reg')">Registrarse</button>
+    </div>
+
+    <div id="formLogin">
+      <input id="logUsuario" placeholder="Usuario">
+      <input id="logPassword" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')login()">
+      <button onclick="login()">Entrar</button>
+    </div>
+
+    <div id="formReg" class="hidden">
+      <input id="regUsuario" placeholder="Usuario (de 3 a 20 caracteres)">
+      <input id="regPassword" type="password" placeholder="Contraseña (mínimo 8 caracteres)">
+      <select id="regRol" onchange="cambioRol()">
+        <option value="usuario">Usuario</option>
+        <option value="admin">Administrador</option>
+      </select>
+      <input id="regCodigo" class="hidden" type="password" placeholder="Código de administrador">
+      <button onclick="registrar()">Crear cuenta</button>
+    </div>
+
+    <div id="msgAuth"></div>
+  </div>
+
+  <!-- lo que se ve despues de iniciar sesion -->
+  <div id="vistaApp" class="hidden">
+
+    <nav>
+      <button data-v="inicio" onclick="ir('inicio')">Inicio</button>
+      <button data-v="logs" class="solo-admin" onclick="ir('logs')">Logs</button>
+      <button data-v="usuarios" class="solo-admin" onclick="ir('usuarios')">Usuarios</button>
+      <button data-v="demo" onclick="ir('demo')">Modo demostración</button>
+    </nav>
+
+    <div id="v-inicio" class="card">
+      <h2 id="saludo"></h2>
+      <p id="infoSesion"></p>
+      <div id="statsBox" class="stats hidden"></div>
+    </div>
+
+    <div id="v-logs" class="card hidden">
+      <h2>Registro de accesos</h2>
+      <div class="fila">
+        <input id="fUsuario" placeholder="Buscar por usuario">
+        <select id="fResultado">
+          <option value="">Todos los resultados</option>
+          <option>EXITOSO</option>
+          <option>FALLIDO</option>
+          <option>BLOQUEADO</option>
+          <option>ACCESO DENEGADO</option>
+          <option>TOKEN INVALIDO</option>
+          <option>REGISTRO</option>
+        </select>
+        <button onclick="cargarLogs()">Filtrar</button>
+      </div>
+      <div class="tabla">
+        <table>
+          <thead><tr><th>Usuario</th><th>Fecha</th><th>Hora</th><th>Resultado</th></tr></thead>
+          <tbody id="tbLogs"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="v-usuarios" class="card hidden">
+      <h2>Usuarios registrados</h2>
+      <div id="msgUsr"></div>
+      <div class="tabla" style="margin-top:12px">
+        <table>
+          <thead><tr><th>ID</th><th>Usuario</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tbUsr"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="v-demo" class="card hidden">
+      <h2>Modo demostración</h2>
+      <p>Aquí está el token de tu sesión. Lo puedes modificar para probar con un token inválido.</p>
+      <textarea id="tokenArea" rows="4"></textarea>
+      <button onclick="demo('/panel', true)">Acceder con token</button>
+      <button class="sec" onclick="demo('/panel', false)">Probar sin token</button>
+      <button class="sec" onclick="demo('/logs', true)">Ver logs (solo admin)</button>
+      <h2 style="margin-top:20px">Respuesta del servidor</h2>
+      <pre id="respuesta">Todavía no se ha hecho ninguna prueba</pre>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// para que si alguien se registra con un nombre raro no se meta html a la pagina
+function esc(texto) {
+  return String(texto).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+let sesion = null; // aqui se guardan los datos que vienen dentro del token
+
+// funcion para hablar con el servidor, le agrega el token si hay uno guardado
+async function api(ruta, opciones = {}, conToken = true) {
+  const token = localStorage.getItem('token');
+  const headers = { 'Content-Type': 'application/json' };
+  if (conToken && token) headers['Authorization'] = 'Bearer ' + token;
+
+  const r = await fetch(ruta, { ...opciones, headers });
+  let data = {};
+  try { data = await r.json(); } catch (e) {}
+  return { status: r.status, ok: r.ok, data };
+}
+
+// saca los datos del token (la parte de en medio es un json en base64)
+// y revisa que no haya expirado
+function leerToken() {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+  try {
+    const parte = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const datos = JSON.parse(atob(parte));
+    return datos.exp * 1000 > Date.now() ? datos : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function mensaje(id, texto, bien) {
+  $(id).innerHTML = '<div class="msg ' + (bien ? 'ok' : 'err') + '">' + esc(texto) + '</div>';
+}
+
+// cambia entre login y registro
+function tabAuth(cual) {
+  $('formLogin').classList.toggle('hidden', cual !== 'login');
+  $('formReg').classList.toggle('hidden', cual !== 'reg');
+  $('tabLogin').classList.toggle('sec', cual !== 'login');
+  $('tabReg').classList.toggle('sec', cual !== 'reg');
+  $('msgAuth').innerHTML = '';
+}
+
+// el campo del codigo solo sale si eligen administrador
+function cambioRol() {
+  $('regCodigo').classList.toggle('hidden', $('regRol').value !== 'admin');
+}
+
+async function registrar() {
+  const datos = {
+    usuario: $('regUsuario').value,
+    password: $('regPassword').value,
+    rol: $('regRol').value,
+    codigoAdmin: $('regCodigo').value
+  };
+
+  const r = await api('/registro', { method: 'POST', body: JSON.stringify(datos) }, false);
+
+  if (r.ok) {
+    $('logUsuario').value = datos.usuario;
+    tabAuth('login');
+    mensaje('msgAuth', r.data.mensaje + '. Ya puedes iniciar sesión.', true);
+  } else {
+    mensaje('msgAuth', r.data.mensaje || 'No se pudo registrar', false);
+  }
+}
+
+async function login() {
+  const datos = {
+    usuario: $('logUsuario').value,
+    password: $('logPassword').value
+  };
+
+  const r = await api('/login', { method: 'POST', body: JSON.stringify(datos) }, false);
+
+  if (r.ok && r.data.token) {
+    localStorage.setItem('token', r.data.token); // se guarda para no pedir login a cada rato
+    $('logPassword').value = '';
+    iniciarSesion();
+  } else {
+    mensaje('msgAuth', r.data.mensaje || 'No se pudo iniciar sesión', false);
+  }
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  sesion = null;
+  mostrarVistas();
+}
+
+function iniciarSesion() {
+  sesion = leerToken();
+  if (!sesion) { logout(); return; }
+  mostrarVistas();
+  ir('inicio');
+}
+
+// muestra el login o el panel segun haya sesion
+function mostrarVistas() {
+  const dentro = sesion !== null;
+  $('vistaAuth').classList.toggle('hidden', dentro);
+  $('vistaApp').classList.toggle('hidden', !dentro);
+  $('sesionInfo').classList.toggle('hidden', !dentro);
+
+  if (dentro) {
+    const nombreRol = sesion.rol === 'admin' ? 'Administrador' : 'Usuario';
+    $('quien').textContent = sesion.usuario + ' (' + nombreRol + ')';
+
+    // los botones de logs y usuarios solo los ve el admin
+    document.querySelectorAll('.solo-admin').forEach(b => {
+      b.classList.toggle('hidden', sesion.rol !== 'admin');
+    });
+  }
+}
+
+function ir(vista) {
+  ['inicio', 'logs', 'usuarios', 'demo'].forEach(v => {
+    $('v-' + v).classList.toggle('hidden', v !== vista);
+  });
+  document.querySelectorAll('nav button').forEach(b => {
+    b.classList.toggle('act', b.dataset.v === vista);
+  });
+
+  if (vista === 'inicio') cargarInicio();
+  if (vista === 'logs') cargarLogs();
+  if (vista === 'usuarios') cargarUsuarios();
+  if (vista === 'demo') $('tokenArea').value = localStorage.getItem('token') || '';
+}
+
+async function cargarInicio() {
+  $('saludo').textContent = 'Hola, ' + sesion.usuario;
+  const expira = new Date(sesion.exp * 1000).toLocaleTimeString('es-MX');
+  const nombreRol = sesion.rol === 'admin' ? 'Administrador' : 'Usuario';
+  $('infoSesion').textContent = 'Tu rol es ' + nombreRol + ' y tu sesión expira a las ' + expira + '.';
+
+  const caja = $('statsBox');
+  if (sesion.rol !== 'admin') {
+    caja.classList.add('hidden');
+    return;
+  }
+
+  const r = await api('/estadisticas');
+  if (!r.ok) return;
+  const d = r.data;
+
+  caja.classList.remove('hidden');
+  caja.innerHTML =
+    '<div class="stat"><b>' + d.total + '</b>Accesos totales</div>' +
+    '<div class="stat"><b>' + d.exitosos + '</b>Exitosos</div>' +
+    '<div class="stat"><b>' + d.fallidos + '</b>Fallidos</div>' +
+    '<div class="stat"><b>' + d.bloqueos + '</b>Bloqueos</div>' +
+    '<div class="stat"><b>' + d.usuarios + '</b>Usuarios</div>' +
+    '<div class="stat"><b style="font-size:17px">' + (d.ultimo ? esc(d.ultimo.usuario) : 'ninguno') + '</b>Último acceso' +
+    (d.ultimo ? '<br>' + esc(d.ultimo.fecha + ' ' + d.ultimo.hora) : '') + '</div>';
+}
+
+// color de la etiqueta segun el resultado
+function colorResultado(res) {
+  if (res === 'EXITOSO') return 'verde';
+  if (['FALLIDO', 'BLOQUEADO', 'ACCESO DENEGADO', 'TOKEN INVALIDO'].includes(res)) return 'rojo';
+  return 'gris';
+}
+
+async function cargarLogs() {
+  const filtros = new URLSearchParams({
+    usuario: $('fUsuario').value,
+    resultado: $('fResultado').value
+  });
+
+  const r = await api('/logs?' + filtros);
+
+  if (!r.ok) {
+    $('tbLogs').innerHTML = '<tr><td colspan="4">' + esc(r.data.mensaje || 'Sin acceso') + '</td></tr>';
+    return;
+  }
+
+  if (r.data.length === 0) {
+    $('tbLogs').innerHTML = '<tr><td colspan="4">No hay registros</td></tr>';
+    return;
+  }
+
+  $('tbLogs').innerHTML = r.data.map(l =>
+    '<tr><td>' + esc(l.usuario) + '</td><td>' + esc(l.fecha) + '</td><td>' + esc(l.hora) +
+    '</td><td><span class="tag ' + colorResultado(l.resultado) + '">' + esc(l.resultado) + '</span></td></tr>'
+  ).join('');
+}
+
+async function cargarUsuarios() {
+  const r = await api('/usuarios');
+  if (!r.ok) return;
+
+  $('tbUsr').innerHTML = r.data.map(u => {
+    const bloqueado = u.bloqueado_hasta > Date.now();
+    const soyYo = u.id === sesion.id;
+    const rolNuevo = u.rol === 'admin' ? 'usuario' : 'admin';
+
+    let acciones = '-';
+    if (!soyYo) {
+      acciones =
+        '<button class="mini sec" onclick="cambiarRol(' + u.id + ',\'' + rolNuevo + '\')">Hacer ' + rolNuevo + '</button>' +
+        (bloqueado ? '<button class="mini sec" onclick="desbloquear(' + u.id + ')">Desbloquear</button>' : '') +
+        '<button class="mini" onclick="eliminar(' + u.id + ')">Eliminar</button>';
+    }
+
+    return '<tr><td>' + u.id + '</td><td>' + esc(u.usuario) + (soyYo ? ' (tú)' : '') + '</td>' +
+      '<td><span class="tag ' + (u.rol === 'admin' ? 'dorado' : 'gris') + '">' + u.rol + '</span></td>' +
+      '<td><span class="tag ' + (bloqueado ? 'rojo' : 'verde') + '">' + (bloqueado ? 'Bloqueado' : 'Activo') + '</span></td>' +
+      '<td>' + acciones + '</td></tr>';
+  }).join('');
+}
+
+async function accionUsuario(ruta, metodo, cuerpo) {
+  const r = await api(ruta, { method: metodo, body: cuerpo ? JSON.stringify(cuerpo) : undefined });
+  mensaje('msgUsr', r.data.mensaje || 'Error', r.ok);
+  cargarUsuarios();
+}
+
+function cambiarRol(id, rol) { accionUsuario('/usuarios/' + id + '/rol', 'PUT', { rol: rol }); }
+function desbloquear(id) { accionUsuario('/usuarios/' + id + '/desbloquear', 'PUT'); }
+function eliminar(id) {
+  if (confirm('¿Seguro que quieres eliminar este usuario?')) {
+    accionUsuario('/usuarios/' + id, 'DELETE');
+  }
+}
+
+// pruebas para la exposicion: con token, sin token o con token modificado
+async function demo(ruta, conToken) {
+  const headers = {};
+  if (conToken) headers['Authorization'] = 'Bearer ' + $('tokenArea').value.trim();
+
+  const r = await fetch(ruta, { headers });
+  let data = {};
+  try { data = await r.json(); } catch (e) {}
+
+  $('respuesta').textContent = 'Código HTTP: ' + r.status + '\n\n' + JSON.stringify(data, null, 2);
+}
+
+// al abrir la pagina, si todavia hay un token valido se entra directo
+sesion = leerToken();
+if (sesion) iniciarSesion();
+else localStorage.removeItem('token');
+</script>
+
+</body>
+</html>
