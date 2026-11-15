@@ -2,6 +2,10 @@
 
 Proyecto de control de acceso en red. Maneja los tres conceptos básicos: identificación, autenticación y autorización, y guarda una bitácora con el usuario, la fecha, la hora y el resultado de cada intento de acceso.
 
+Link de la versión en línea: https://jwt-token-mb2j.onrender.com/ 
+
+La versión en línea está en un servicio gratuito, así que si nadie la ha abierto en un rato tarda cerca de un minuto en despertar. Además, los usuarios y logs se borran cuando el servicio se reinicia, por eso hay que volver a registrarse de vez en cuando.
+
 ## Qué hace
 - Registro e inicio de sesión, las contraseñas se guardan cifradas con bcryptjs
 - Autenticación con tokens JWT que duran 1 hora
@@ -14,7 +18,7 @@ Proyecto de control de acceso en red. Maneja los tres conceptos básicos: identi
 ## Tecnologías
 Node.js, Express, SQLite (el que trae Node incluido), bcryptjs, jsonwebtoken, helmet y express-rate-limit.
 
-## Cómo correrlo
+## Cómo correrlo en la computadora
 1. Tener Node 22.13 o más nuevo e instalar las dependencias con `npm install`
 2. Copiar `.env.example` como `.env` y cambiar la SECRET_KEY y el ADMIN_CODE
 3. Iniciar con `npm start`
